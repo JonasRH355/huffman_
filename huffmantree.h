@@ -1,17 +1,14 @@
-struct Folha{
-    char caracter;
-};
-
-struct Arvore{
-    Folha* raiz = nullptr;
-    Arvore * Tl = nullptr;
-    Arvore * TR = nullptr;
-};
-
 struct No{
     char letter = '\0';
     int frequencia = 0;
     No * direito = nullptr;
+};
+
+struct NoArvore{
+    char letter = '\0';
+    int frequencia = 0;
+    NoArvore * direito = nullptr;
+    NoArvore * esquerdo = nullptr;
 };
 
 struct lista{
@@ -19,7 +16,18 @@ struct lista{
     No* fim = nullptr;
 };
 
+struct Arvore{
+    NoArvore *raiz = nullptr;
+};
+
 //_____________________Funções padrões__________________________
+void mostrarArvore(NoArvore *raiz){
+    if (raiz == nullptr) return;
+    mostrarArvore(raiz->esquerdo);
+    std::cout<<raiz->letter<<" : "<<raiz->frequencia<<std::endl;
+    mostrarArvore(raiz->direito);
+}
+
 void mostrarLista (lista text){ //mostra a lista
     No *aux = text.inicio;
     while (aux != nullptr) {
@@ -130,7 +138,30 @@ bool listadefrequencia(const std::string& text,lista  &x){ // Função que gera 
 
 //_________________________Árvore_____________________________________________
 
+int somaFrequencia (int x,int y){
+    return x+y;
+}
 
+void copieNos(No *x, NoArvore *&y){
+    y->frequencia = x->frequencia;
+    y->letter = x->letter;
+}
+
+bool brotoDaLista(lista x,Arvore &z)  // Função que cria um árvore dos primeiros nós da lista
+{
+    No *aux = x.inicio;
+    auto *raiz = new NoArvore;
+    auto *esq = new NoArvore;
+    auto *dir = new NoArvore;
+    int soma = somaFrequencia(aux->frequencia,aux->direito->frequencia);
+    raiz->frequencia= soma;
+    copieNos(aux,dir);
+    copieNos(aux->direito,esq);
+    raiz->direito = dir;
+    raiz->esquerdo = esq;
+    z.raiz = raiz;
+    return true;
+}
 
 bool criarArvore(){
 

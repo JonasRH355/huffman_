@@ -19,7 +19,16 @@ struct lista{
     No* fim = nullptr;
 };
 
-bool inserirlista(lista &lista,char caracter,int freq){
+//_____________________Funções padrões__________________________
+void mostrarLista (lista text){ //mostra a lista
+    No *aux = text.inicio;
+    while (aux != nullptr) {
+        std::cout << aux->letter<< " : "<< aux->frequencia<< "\n";
+        aux = aux->direito;
+    }
+}
+
+bool inserirlista(lista &lista,char caracter,int freq){ // iserir de forma ordenada
     No *novo = new No;
     novo->letter = caracter;
     novo->frequencia = freq;
@@ -34,8 +43,8 @@ bool inserirlista(lista &lista,char caracter,int freq){
     }                                    //caso for a maior
     else {
         No *aux = lista.inicio;
-        while (aux != nullptr) {
-            if (aux->frequencia <= novo->frequencia && novo->frequencia <= aux->direito->frequencia) {//caso 1: aux <= x <= next
+        while (aux != nullptr) {  //caso 1: aux <= x <= next
+            if (aux->frequencia <= novo->frequencia && novo->frequencia <= aux->direito->frequencia) {
                 novo->direito = aux->direito;
                 aux->direito = novo;
                 return true;
@@ -79,8 +88,9 @@ bool retirarLista( lista &lista, char valor ){ // Função feita para retirar da
     delete aux;
     return true;
 }
+//_____________________Fim Funções Padrões__________________________________
 
-
+//______________________Funções gerais______________________________________
 bool inserirlistadefrequencia(lista &x,char caracter ){
     if (x.inicio == nullptr && x.fim == nullptr){  // Caso que acontece quando não tem nada na lista
         No* novoNo = new No;
@@ -91,17 +101,15 @@ bool inserirlistadefrequencia(lista &x,char caracter ){
         return  true;
     }
 
-
     No *current = x.inicio;
-
-    while (current) { //
-        if (current->letter == caracter) {
-            int freq = current->frequencia +1;
+    while (current) { // loop que percorre a lista...
+        if (current->letter == caracter) {   // caso já tenha na lista,
+            int freq = current->frequencia +1;  // ele aumenta +1 de frequência e realoca dentro da lista
             retirarLista(x,current->letter);
             inserirlista(x,caracter,freq);
             return true;
         }
-        if (!current->direito){
+        if (!current->direito){ // se chegou até o ultimo da lista e não o achou, inseri ele no começo dela
             inserirlista(x,caracter,1);
             return true;
         }
@@ -111,26 +119,20 @@ bool inserirlistadefrequencia(lista &x,char caracter ){
     return true;
 }
 
-bool listadefrequencia(const std::string& text,lista  &x){
+bool listadefrequencia(const std::string& text,lista  &x){ // Função que gera a lista de frequência
     for (char i : text) {
         inserirlistadefrequencia(x,i);
     }
     return true;
 }
+//_____________________Fim Funções Gerais_____________________________________
 
-bool ordenar(lista lista_original, lista &lista_ordenada){
-    No *trv = lista_original.inicio;
-    std::cout<<trv->frequencia;
-    while (trv->direito != nullptr){
-        inserirlista(lista_ordenada,trv->letter,1);
-        trv = trv->direito;
-    }
-}
 
-void mostrarLista (lista text){
-    No *aux = text.inicio;
-    while (aux != nullptr) {
-        std::cout << aux->letter<< " : "<< aux->frequencia<< "\n";
-        aux = aux->direito;
-    }
+//_________________________Árvore_____________________________________________
+
+
+
+bool criarArvore(){
+
 }
+//_______________________Fim Árvore___________________________________________

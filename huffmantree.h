@@ -1,14 +1,15 @@
+
 struct No{
     char letter = '\0';
     int frequencia = 0;
     No * direito = nullptr;
+    No * esquerdo = nullptr;
 };
 
 struct NoArvore{
-    char letter = '\0';
     int frequencia = 0;
-    NoArvore * direito = nullptr;
-    NoArvore * esquerdo = nullptr;
+    No * direito = nullptr;
+    No * esquerdo = nullptr;
 };
 
 struct lista{
@@ -21,12 +22,13 @@ struct Arvore{
 };
 
 //_____________________Funções padrões__________________________
-void mostrarArvore(NoArvore *raiz){
+void mostrarArvore(No *raiz){
     if (raiz == nullptr) return;
     mostrarArvore(raiz->esquerdo);
     std::cout<<raiz->letter<<" : "<<raiz->frequencia<<std::endl;
     mostrarArvore(raiz->direito);
 }
+
 
 void mostrarLista (lista text){ //mostra a lista
     No *aux = text.inicio;
@@ -37,7 +39,7 @@ void mostrarLista (lista text){ //mostra a lista
 }
 
 bool inserirlista(lista &lista,char caracter,int freq){ // iserir de forma ordenada
-    No *novo = new No;
+    auto *novo = new No;
     novo->letter = caracter;
     novo->frequencia = freq;
     if (novo->frequencia <= lista.inicio->frequencia) {      //caso for igual ou menor que a primeira
@@ -63,7 +65,11 @@ bool inserirlista(lista &lista,char caracter,int freq){ // iserir de forma orden
     }
 }
 
-bool retirarLista( lista &lista, char valor ){ // Função feita para retirar da lista
+bool inserirnacopia(lista &lista,No ){
+
+}
+
+bool retirarLista(lista &lista, char valor ){ // Função feita para retirar da lista
     if( lista.inicio == nullptr ) return false;
 
     No *aux = lista.inicio;
@@ -142,7 +148,7 @@ int somaFrequencia (int x,int y){
     return x+y;
 }
 
-void copieNos(No *x, NoArvore *&y){
+void copieNos(No *x, No *&y){
     y->frequencia = x->frequencia;
     y->letter = x->letter;
 }
@@ -151,8 +157,8 @@ bool brotoDaLista(lista x,Arvore &z)  // Função que cria um árvore dos primei
 {
     No *aux = x.inicio;
     auto *raiz = new NoArvore;
-    auto *esq = new NoArvore;
-    auto *dir = new NoArvore;
+    auto *esq = new No;
+    auto *dir = new No;
     int soma = somaFrequencia(aux->frequencia,aux->direito->frequencia);
     raiz->frequencia= soma;
     copieNos(aux,dir);
@@ -163,7 +169,36 @@ bool brotoDaLista(lista x,Arvore &z)  // Função que cria um árvore dos primei
     return true;
 }
 
-bool criarArvore(){
+bool criarArvore(lista l_ordenada, Arvore ArvoreMae){
+    if(l_ordenada.inicio == nullptr){return false;}
+    No *aux = l_ordenada.inicio;
+    lista copia = l_ordenada;
 
+    
+    /*
+    while (aux){
+        if(aux->direito->frequencia == ArvoreMae.raiz->frequencia)
+        {
+            if (aux->direito->direito->frequencia >= ArvoreMae.raiz->frequencia){
+                brotoDaLista(copia,ArvoreMae);
+            }
+            if (aux->direito->direito->frequencia == ArvoreMae.raiz->frequencia){
+
+            }
+        }
+        aux = aux->direito;
+    }*/
+/*
+    while(aux){
+
+
+        brotoDaLista(copia,ArvoreMae);
+        retirarLista(copia,aux->letter);
+
+        aux = aux->direito;
+    }
+
+
+    mostrarArvore(ArvoreMae.raiz);*/
 }
 //_______________________Fim Árvore___________________________________________

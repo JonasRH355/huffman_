@@ -9,7 +9,6 @@ int main() {
     listadefrequencia(text,listadefrequenci);
     mostrarLista(listadefrequenci);
     std::cout<<"\n";
-    brotoDaLista(listadefrequenci,huffman);
-    mostrarArvore(huffman.raiz);
+    criarArvore(listadefrequenci,huffman);
     return 0;
 }

@@ -3,13 +3,17 @@ struct No{
     char letter = '\0';
     int frequencia = 0;
     No * direito = nullptr;
-    No * esquerdo = nullptr;
 };
 
 struct NoArvore{
-    int frequencia = 0;
-    No * direito = nullptr;
-    No * esquerdo = nullptr;
+    char caracter;
+    unsigned frequencia = 0;
+    NoArvore * direito = nullptr;
+    NoArvore * esquerdo = nullptr;
+    NoArvore(char caracter, unsigned freq){
+        this->caracter = caracter;
+        this->frequencia = freq;
+    }
 };
 
 struct lista{
@@ -22,10 +26,10 @@ struct Arvore{
 };
 
 //_____________________Funções padrões__________________________
-void mostrarArvore(No *raiz){
+void mostrarArvore(NoArvore *raiz){
     if (raiz == nullptr) return;
     mostrarArvore(raiz->esquerdo);
-    std::cout<<raiz->letter<<" : "<<raiz->frequencia<<std::endl;
+    std::cout<<raiz->caracter<<" : "<<raiz->frequencia<<std::endl;
     mostrarArvore(raiz->direito);
 }
 
@@ -152,11 +156,11 @@ void copieNos(No *x, No *&y){
     y->frequencia = x->frequencia;
     y->letter = x->letter;
 }
-
+/*
 bool brotoDaLista(lista x,Arvore &z)  // Função que cria um árvore dos primeiros nós da lista
 {
     No *aux = x.inicio;
-    auto *raiz = new NoArvore;
+    auto *raiz = new NoArvore('c',3);
     auto *esq = new No;
     auto *dir = new No;
     int soma = somaFrequencia(aux->frequencia,aux->direito->frequencia);
@@ -168,13 +172,11 @@ bool brotoDaLista(lista x,Arvore &z)  // Função que cria um árvore dos primei
     z.raiz = raiz;
     return true;
 }
-
+*/
 bool criarArvore(lista l_ordenada, Arvore ArvoreMae){
     if(l_ordenada.inicio == nullptr){return false;}
     No *aux = l_ordenada.inicio;
     lista copia = l_ordenada;
-
-    
     /*
     while (aux){
         if(aux->direito->frequencia == ArvoreMae.raiz->frequencia)
@@ -202,3 +204,26 @@ bool criarArvore(lista l_ordenada, Arvore ArvoreMae){
     mostrarArvore(ArvoreMae.raiz);*/
 }
 //_______________________Fim Árvore___________________________________________
+bool inserir(NoArvore * &raiz, char caracter, unsigned freq){
+    if(raiz == nullptr){
+        raiz = new NoArvore(caracter,freq);
+        return true;
+    }
+    if(freq < raiz->frequencia){
+        return inserir(raiz->esquerdo,caracter,freq);
+    }else {
+        return inserir(raiz->direito,caracter,freq);
+    }
+}
+
+
+void codigo_de_huffman(lista l_ordenada){
+    NoArvore *esquerdo, *direito, *raizz;
+    No *aux = l_ordenada.inicio;
+    while(aux != nullptr){
+        inserir(raizz,aux->letter,aux->frequencia);
+        aux = aux->direito;
+    }
+
+    
+}

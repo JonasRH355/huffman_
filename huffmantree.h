@@ -1,138 +1,107 @@
-
-struct No{
-    char letter = '\0';
-    int frequencia = 0;
-    No * direito = nullptr;
-};
-
-struct NoArvore{
+struct NoArvore {
     char caracter;
-    unsigned frequencia = 0;
-    NoArvore * direito = nullptr;
-    NoArvore * esquerdo = nullptr;
-    NoArvore(char caracter, unsigned freq){
+    unsigned frequencia;
+    NoArvore *esquerdo, *direito;
+
+    NoArvore(char caracter, unsigned freq) {
         this->caracter = caracter;
         this->frequencia = freq;
+        esquerdo = direito = nullptr;
     }
 };
 
-struct lista{
-    No* inicio = nullptr;
-    No* fim = nullptr;
+struct Lista {
+    NoArvore *nodoArvore;
+    Lista *proximo;
 };
 
-struct Lista{
-    NoArvore * nodaArvore = nullptr;
-    Lista * proximo = nullptr;
-};
-
-struct Arvore{
-    NoArvore *raiz = nullptr;
-};
-
-struct MapadeBits{
+struct MapaDeBits {
     char caracter;
     std::string bits;
-    MapadeBits *next;
+    MapaDeBits *proximo;
 };
 
-bool listadefrequencia(const char text,No*  &x) { // Função que gera a lista de frequência
-    No *atual = x;
-    while (atual != nullptr && atual->letter != text) {
+void atualizarListaDeFrequencia(char text, NoArvore* &lista) {
+    NoArvore *atual = lista;
+    while (atual != nullptr && atual->caracter != text) {
         atual = atual->direito;
     }
     if (atual != nullptr) {
         atual->frequencia++;
     } else {
-        No *novafrequencia = new No();
-        novafrequencia->letter = text;
-        novafrequencia->frequencia = 1;
-        novafrequencia->direito = x;
-        x = novafrequencia;
+        NoArvore *novaFrequencia = new NoArvore(text, 1);
+        novaFrequencia->direito = lista;
+        lista = novaFrequencia;
     }
 }
 
-bool inserir(NoArvore * &raiz, char caracter, unsigned freq){
-    if(raiz == nullptr){
-        raiz = new NoArvore(caracter,freq);
-        return true;
-    }
-    if(freq < raiz->frequencia){
-        return inserir(raiz->esquerdo,caracter,freq);
-    }else {
-        return inserir(raiz->direito,caracter,freq);
-    }
-}
+void inserirNoLista(Lista* &topo, NoArvore* no) {
+    Lista* novoNodo = new Lista();
+    novoNodo->nodoArvore = no;
+    novoNodo->proximo = nullptr;
 
-void inserirNoLista(Lista* &topo, NoArvore* no){
-    Lista* newNode = new Lista();
-    newNode->nodaArvore = no;
-    newNode->proximo = nullptr;
-
-    if (topo == nullptr || topo->nodaArvore->frequencia >= no->frequencia) {
-        newNode->proximo = topo;
-        topo = newNode;
+    if (topo == nullptr || topo->nodoArvore->frequencia >= no->frequencia) {
+        novoNodo->proximo = topo;
+        topo = novoNodo;
     } else {
-        Lista* Atual = topo;
-        while (Atual->proximo != nullptr && Atual->proximo->nodaArvore->frequencia < no->frequencia) {
-            Atual = Atual->proximo;
+        Lista* atual = topo;
+        while (atual->proximo != nullptr && atual->proximo->nodoArvore->frequencia < no->frequencia) {
+            atual = atual->proximo;
         }
-        newNode->proximo = Atual->proximo;
-        Atual->proximo = newNode;
+        novoNodo->proximo = atual->proximo;
+        atual->proximo = novoNodo;
     }
 }
 
-void atualizarbitmapa(MapadeBits* &topo, char caracter,std::string bits){
-    MapadeBits* novobit = new MapadeBits();
-    novobit->caracter = caracter;
-    novobit->bits = bits;
-    novobit->next = topo;
-    topo = novobit;
+void atualizarMapaDeBits(MapaDeBits* &topo, char caracter, std::string bits) {
+    MapaDeBits* novoBit = new MapaDeBits();
+    novoBit->caracter = caracter;
+    novoBit->bits = bits;
+    novoBit->proximo = topo;
+    topo = novoBit;
 }
 
-void mostrarHuffman(NoArvore* rota,std::string str,MapadeBits* &bitmap){
-    if (!rota)
-        return;
+void mostrarHuffman(NoArvore* raiz, std::string str, MapaDeBits* &mapaDeBits) {
+    if (!raiz) return;
 
-    if (rota->caracter != '$')
-        atualizarbitmapa(bitmap, rota->caracter, str);
+    if (raiz->caracter != '$')
+        atualizarMapaDeBits(mapaDeBits, raiz->caracter, str);
 
-    mostrarHuffman(rota->esquerdo, str + "0", bitmap);
-    mostrarHuffman(rota->direito, str + "1", bitmap);
+    mostrarHuffman(raiz->esquerdo, str + "0", mapaDeBits);
+    mostrarHuffman(raiz->direito, str + "1", mapaDeBits);
 }
 
-
-void codigo_de_huffman(std::string text){
-    No * lista_defrequencia = nullptr;
+void codigoDeHuffman(std::string text) {
+    NoArvore *listaDeFrequencia = nullptr;
     for (char i : text) {
-        listadefrequencia(i,lista_defrequencia);
+        atualizarListaDeFrequencia(i, listaDeFrequencia);
     }
+
     Lista* listaNo = nullptr;
-    No* atual = lista_defrequencia;
+    NoArvore* atual = listaDeFrequencia;
     while (atual != nullptr) {
-        inserirNoLista(listaNo, reinterpret_cast<NoArvore *>(new No(atual->letter, atual->frequencia)));
+        inserirNoLista(listaNo, new NoArvore(atual->caracter, atual->frequencia));
         atual = atual->direito;
     }
 
-        while (listaNo != nullptr && listaNo->proximo != nullptr) {
-        NoArvore * esquerdo= listaNo->nodaArvore;
+    while (listaNo != nullptr && listaNo->proximo != nullptr) {
+        NoArvore *esquerdo = listaNo->nodoArvore;
         listaNo = listaNo->proximo;
-        NoArvore *right = listaNo->nodaArvore;
+        NoArvore *direito = listaNo->nodoArvore;
         listaNo = listaNo->proximo;
 
-        NoArvore *topo = new NoArvore('$', esquerdo->frequencia + right->frequencia);
+        NoArvore *topo = new NoArvore('$', esquerdo->frequencia + direito->frequencia);
         topo->esquerdo = esquerdo;
-        topo->direito = right;
+        topo->direito = direito;
         inserirNoLista(listaNo, topo);
     }
 
-    MapadeBits* bitMap = nullptr;
-    mostrarHuffman(listaNo->nodaArvore, "", bitMap);
+    MapaDeBits* bitMap = nullptr;
+    mostrarHuffman(listaNo->nodoArvore, "", bitMap);
 
-    // Imprimir tabela de bits
     std::cout << "Tabela de Bits:\n";
     while (bitMap != nullptr) {
         std::cout << bitMap->caracter << " : " << bitMap->bits << "\n";
-        bitMap = bitMap->next;
+        bitMap = bitMap->proximo;
     }
 }

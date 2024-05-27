@@ -1,18 +1,15 @@
 #include <iostream>
-#include "huffmantree.h"
 #include <string>
+#include "huffmantree.h"
 
 
 int main() {
-    lista listadefrequenci;
+
     std::string text;
+    std::cout << "Digite o texto a ser comprimido: ";
+    std::getline(std::cin, text);
 
-    //Primeira parte: pegar um text e criar uma lista
-    // em ordem crescente com caracteres e sua frequência
-    text = "My name is Jonatas"; // a=3 s=2 n=2 m=2
-
-    // Segunda parte: Codigo de Huffman
-    codigo_de_huffman(text);
+    codigoDeHuffman(text);
 
     return 0;
 }

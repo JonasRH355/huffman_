@@ -21,8 +21,17 @@ struct lista{
     No* fim = nullptr;
 };
 
+struct Lista{
+    NoArvore * nodaArvore = nullptr;
+    Lista * proximo = nullptr;
+};
+
 struct Arvore{
     NoArvore *raiz = nullptr;
+};
+
+struct MapadeBits{
+
 };
 
 //_____________________Funções padrões__________________________
@@ -137,11 +146,20 @@ bool inserirlistadefrequencia(lista &x,char caracter ){
     return true;
 }
 
-bool listadefrequencia(const std::string& text,lista  &x){ // Função que gera a lista de frequência
-    for (char i : text) {
-        inserirlistadefrequencia(x,i);
+bool listadefrequencia(const char text,No*  &x){ // Função que gera a lista de frequência
+    No* atual = x;
+    while (atual != nullptr && atual->letter != text) {
+        atual = atual->direito;
     }
-    return true;
+    if (atual != nullptr) {
+        atual->frequencia++;
+    } else {
+        No* novafrequencia = new No();
+        novafrequencia->letter = text;
+        novafrequencia->frequencia = 1;
+        novafrequencia->direito = x;
+        x = novafrequencia;
+    }
 }
 //_____________________Fim Funções Gerais_____________________________________
 
@@ -217,13 +235,37 @@ bool inserir(NoArvore * &raiz, char caracter, unsigned freq){
 }
 
 
-void codigo_de_huffman(lista l_ordenada){
-    NoArvore *esquerdo, *direito, *raizz;
-    No *aux = l_ordenada.inicio;
-    while(aux != nullptr){
-        inserir(raizz,aux->letter,aux->frequencia);
-        aux = aux->direito;
+void codigo_de_huffman(std::string text){
+    No * lista_defrequencia = nullptr;
+    for (char i : text) {
+        listadefrequencia(text[i],lista_defrequencia);
+    }
+    Lista* listaNo = nullptr;
+    No* atual = lista_defrequencia;
+    while (atual != nullptr) {
+        inserirNoLista(listaNo, new No(atual->letter, atual->frequencia));
+        atual = atual->direito;
     }
 
-    
+        while (listaNo != nullptr && listaNo->proximo != nullptr) {
+        NoArvore * esquerdo= listaNo->nodaArvore;
+        listaNo = listaNo->proximo;
+        NoArvore *right = listaNo->nodaArvore;
+        listaNo = listaNo->proximo;
+
+        NoArvore *topo = new NoArvore('$', esquerdo->frequencia + right->frequencia);
+        topo->esquerdo = esquerdo;
+        topo->direito = right;
+        inserirNoLista(listaNo, topo);
+    }
+
+    MapadeBits* bitMap = nullptr;
+    printHuffmanCodes(listaNo->nodaArvore, "", bitMap);
+
+    // Imprimir tabela de bits
+    std::cout << "Tabela de Bits:\n";
+    while (bitMap != nullptr) {
+        std::cout << bitMap->character << " : " << bitMap->bits << "\n";
+        bitMap = bitMap->next;
+    }
 }
